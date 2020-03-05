@@ -2,7 +2,8 @@ import qrcode
 import argparse
 from pathlib import Path
 from PIL import Image
-
+import numpy as np
+import logging
 
 error_correct = {
     "L" : qrcode.constants.ERROR_CORRECT_L,
@@ -26,6 +27,10 @@ def get_args_cli():
                         help = "Number of pixels each box of QR code is", default = 10)
     parser.add_argument("-b", "--border", type = int,
                         help = "Number of pixels the border should be", default = 4)
+    parser.add_argument("-r", "--wpixels", type = int,
+                        help = "Width in pixels of the saved image", default = 991)
+    parser.add_argument("-c", "--hpixels", type = int,
+                        help = "Height in pixels of the saved image", default = 306)
     return parser.parse_args()
 
 def main():
@@ -40,6 +45,33 @@ def main():
     qr.add_data(p.data)
     qr.make(fit=True)
     img = qr.make_image(fill_color="black", back_color="white")
+
+    #create custom pixel size by padding
+    #first resize the image to the minimum dimension
+    nw = p.wpixels
+    nh = p.hpixels
+    pix = np.array(img)
+    h, w = pix.shape
+    if w>nw and h<=nh:
+        img = img.resize((nw, nw))
+    elif h>nh and w<=nw:
+        img = img.resize((nh, nh))
+    elif h>nh and w>nw:
+        if h/nh > w/nw:
+            nd = nw
+        else:
+            nd = nh
+        img = img.resize((nd, nd))
+    else:
+        pass #no resizing necessary
+    #then make the resized image into an array
+    pix = np.array(img, dtype="uint8")*255
+    h, w = pix.shape
+    #padd this array
+    newpix = np.full((nh, nw), 255, dtype='uint8')
+    newpix[0:h, 0:w]=pix
+    img = Image.fromarray(newpix)
+
     img.save(p.output)
 
 
