@@ -1,10 +1,10 @@
 import textwrap
 import qrcode
 import argparse
-from pathlib import Path
 import warnings
 from PIL import Image, ImageDraw, ImageFont
 import logging
+import global_configuration as gconf
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -47,26 +47,28 @@ sticker_sizes = {
 
 
 qr_defaults = {
-        "version": None,
-        "error_correction": error_correct["M"],
-        "border": 4,
-        "box_size": 10,
+        "version": gconf.VERSION,
+        "error_correction": gconf.ERROR_CORRECTION,
+        "border": gconf.BORDER,
+        "box_size": gconf.BOX_SIZE,
         }
 
 
 defaults = {
-        "printsize": "29x90",
-        "output_path": str(Path("./qrcode.png")),
-        "short_text": "",
-        "long_text": "",
-        "font_size": 18,
+        "printsize": gconf.PRINTSIZE,
+        "output_path": gconf.OUTPUT_PATH,
+        "short_text": gconf.SHORT_TEXT,
+        "long_text": gconf.LONG_TEXT,
+        "font_size": gconf.FONT_SIZE,
         }
 
 
-def create_qr_sticker_image(link, size, small_text="",
-                            long_text="",
+def create_qr_sticker_image(link,
+                            size=defaults["printsize"],
+                            small_text=defaults["short_text"],
+                            long_text=defaults["long_text"],
                             long_text_width=None,
-                            font_size=8,
+                            font_size=defaults["font_size"],
                             qr_properties=None,
                             ):
     """
@@ -192,7 +194,7 @@ def create_qr_sticker_image(link, size, small_text="",
         if width >= nh:
             logger.debug(f"The text width {width} is at least the height {nh}")
             offset = 0
-            for line in textwrap.wrap(long_text, width//(0.7*font_size)):
+            for line in textwrap.wrap(long_text, width//int(0.7*font_size)):
                 if offset > nh:
                     warnings.warn("The long text does not fit the sticker")
                     break
@@ -203,7 +205,7 @@ def create_qr_sticker_image(link, size, small_text="",
                           "for long text.")
     # rotate again if the stickers are to be printed horizontally
     if swapped:
-        background = background.rotate(90)
+        background = background.rotate(90, expand=True)
     return background
 
 
