@@ -2,14 +2,14 @@ import yaml
 import elabapy
 from requests.exceptions import HTTPError
 import os
-import global_configuration as gconf
+from . import _global_defaults as gconf
 from pathlib import Path
 
 
-conf_path = os.path.expanduser(gconf.CONFIG_FOLDER)
-if not os.path.isdir(conf_path):
-    os.mkdir(conf_path)
-if __name__ == "__main__":
+def main():
+    conf_path = os.path.expanduser(gconf.CONFIG_FOLDER)
+    if not os.path.isdir(conf_path):
+        os.mkdir(conf_path)
     # which server will you connect to?
     server = input("Which elabFTW server will you connect to (e.g. elab.exampl"
                    "e.org)? ")
@@ -33,3 +33,7 @@ if __name__ == "__main__":
         with open(str(Path(conf_path+"/elabconfig.yaml")), "w") as f:
             yaml.dump(info, f)
         print("Successfully connected, wrote out config file.")
+
+
+if __name__ == "__main__":
+    main()

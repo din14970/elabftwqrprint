@@ -1,9 +1,9 @@
 import elabapy
 from tabulate import tabulate
 import yaml
-import main
 import os
-import global_configuration as gconf
+from . import _global_defaults as gconf
+from . import create_qr_sticker as main
 
 
 conf_path = os.path.expanduser(gconf.CONFIG_FOLDER)
@@ -15,7 +15,8 @@ def initialize():
         with open(configfile) as f:
             config = yaml.load(f, Loader=yaml.FullLoader)
     except Exception:
-        print("Unable to find or open config file. Run configure_elab first.")
+        print(
+            "Unable to find or open config file. Run configure_elabftw first.")
         return
 
     manager = elabapy.Manager(
@@ -44,7 +45,8 @@ def _get_domain_name():
             config = yaml.load(f, Loader=yaml.FullLoader)
         domain = config["domain_name"]
     except Exception:
-        print("Unable to find or open config file. Run configure_elab first.")
+        print(
+            "Unable to find or open config file. Run configure_elabftw first.")
         return
     return domain
 

@@ -1,13 +1,13 @@
 import yaml
 import os
-import global_configuration as gconf
+from . import _global_defaults as gconf
 from pathlib import Path
 
 
-conf_path = os.path.expanduser(gconf.CONFIG_FOLDER)
-if not os.path.isdir(conf_path):
-    os.mkdir(conf_path)
-if __name__ == "__main__":
+def main():
+    conf_path = os.path.expanduser(gconf.CONFIG_FOLDER)
+    if not os.path.isdir(conf_path):
+        os.mkdir(conf_path)
     # which server will you connect to?
     printer = input("What printer model do you have? [QL-500, QL-550,"
                     " QL-560, QL-570, QL-580N, QL-650TD, QL-700, QL-710W,"
@@ -37,3 +37,7 @@ if __name__ == "__main__":
     with open(config_created, "w") as f:
         yaml.dump(info, f)
     print(f"Successfully wrote out config file {config_created}.")
+
+
+if __name__ == "__main__":
+    main()

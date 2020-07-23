@@ -1,5 +1,7 @@
 .venv
-__pycache__
+**__pycache__**
 *.pyd
 *.png
 tags
+*.egg-info
+.venv_test

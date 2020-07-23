@@ -1,4 +1,4 @@
-import elabqr
+from . import _elabftw_interface as elabqr
 import argparse
 
 
