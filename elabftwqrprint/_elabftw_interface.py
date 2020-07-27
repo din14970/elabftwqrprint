@@ -1,13 +1,15 @@
-import elabapy
-from tabulate import tabulate
-import yaml
 import os
+
+import elabapy
+import yaml
+
+from tabulate import tabulate
+
 from . import _global_defaults as gconf
 from . import create_qr_sticker as main
 
-
 conf_path = os.path.expanduser(gconf.CONFIG_FOLDER)
-configfile = conf_path+"/elabconfig.yaml"
+configfile = conf_path + "/elabconfig.yaml"
 
 
 def initialize():
@@ -15,14 +17,10 @@ def initialize():
         with open(configfile) as f:
             config = yaml.load(f, Loader=yaml.FullLoader)
     except Exception:
-        print(
-            "Unable to find or open config file. Run configure_elabftw first.")
+        print("Unable to find or open config file. Run configure_elabftw first.")
         return
 
-    manager = elabapy.Manager(
-            endpoint=config["endpoint"],
-            token=config["token"]
-            )
+    manager = elabapy.Manager(endpoint=config["endpoint"], token=config["token"])
     return manager
 
 
@@ -45,8 +43,7 @@ def _get_domain_name():
             config = yaml.load(f, Loader=yaml.FullLoader)
         domain = config["domain_name"]
     except Exception:
-        print(
-            "Unable to find or open config file. Run configure_elabftw first.")
+        print("Unable to find or open config file. Run configure_elabftw first.")
         return
     return domain
 
@@ -60,7 +57,5 @@ def make_qrcode_item(id_no, filename, **kwargs):
     link = f"https://{servname}/database.php?mode=view&id={id_no}"
     short_desc = f"{item['date']} {item['title']}"
     print(f"Will create QR sticker for link {link} and title {short_desc}")
-    sticker = main.create_qr_sticker_image(
-            link, small_text=short_desc,
-            **kwargs)
+    sticker = main.create_qr_sticker_image(link, small_text=short_desc, **kwargs)
     sticker.save(filename)

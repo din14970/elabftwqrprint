@@ -1,11 +1,13 @@
-import textwrap
-import qrcode
 import argparse
-import warnings
-from PIL import Image, ImageDraw, ImageFont
 import logging
-from . import _global_defaults as gconf
+import textwrap
+import warnings
 
+from PIL import Image, ImageDraw, ImageFont
+
+import qrcode
+
+from . import _global_defaults as gconf
 
 # logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -20,33 +22,34 @@ sticker_sizes = gconf.STICKER_SIZES
 
 
 qr_defaults = {
-        "version": gconf.VERSION,
-        "error_correction": gconf.ERROR_CORRECTION,
-        "border": gconf.BORDER,
-        "box_size": gconf.BOX_SIZE,
-        }
+    "version": gconf.VERSION,
+    "error_correction": gconf.ERROR_CORRECTION,
+    "border": gconf.BORDER,
+    "box_size": gconf.BOX_SIZE,
+}
 
 
 defaults = {
-        "printsize": gconf.PRINTSIZE,
-        "output_path": gconf.OUTPUT_PATH,
-        "short_text": gconf.SHORT_TEXT,
-        "long_text": gconf.LONG_TEXT,
-        "font": gconf.FONT,
-        "font_size": gconf.FONT_SIZE,
-        }
+    "printsize": gconf.PRINTSIZE,
+    "output_path": gconf.OUTPUT_PATH,
+    "short_text": gconf.SHORT_TEXT,
+    "long_text": gconf.LONG_TEXT,
+    "font": gconf.FONT,
+    "font_size": gconf.FONT_SIZE,
+}
 
 
-def create_qr_sticker_image(link,
-                            size=defaults["printsize"],
-                            small_text=defaults["short_text"],
-                            long_text=defaults["long_text"],
-                            long_text_width=None,
-                            font_path=defaults["font"],
-                            font_size=defaults["font_size"],
-                            qr_properties=None,
-                            qr_size=None,
-                            ):
+def create_qr_sticker_image(
+    link,
+    size=defaults["printsize"],
+    small_text=defaults["short_text"],
+    long_text=defaults["long_text"],
+    long_text_width=None,
+    font_path=defaults["font"],
+    font_size=defaults["font_size"],
+    qr_properties=None,
+    qr_size=None,
+):
     """
     Create an image with a QR code and some text
 
@@ -102,8 +105,7 @@ def create_qr_sticker_image(link,
     if nw is None:
         logger.debug("Sticker width undefined")
         if long_text_width is None:
-            logger.debug("No long text width defined. "
-                         "Taking tape height.")
+            logger.debug("No long text width defined. " "Taking tape height.")
             long_text_width = nh
         if long_text:
             nw = nh + long_text_width
@@ -140,18 +142,20 @@ def create_qr_sticker_image(link,
         logging.debug("No small text is given")
     # check if the small text is not wider than the sticker
     if tw > nw:
-        warnings.warn("The small text exceeds the sticker width."
-                      " Consider using a smaller font size.")
+        warnings.warn(
+            "The small text exceeds the sticker width."
+            " Consider using a smaller font size."
+        )
     # does the image fit on the sticker?
     if qr_size is not None:
         img = img.resize((qr_size, qr_size))
     w, h = img.size
     logger.debug(f"QR code created with size w {w} x h {h}")
-    if h > nh-th:
+    if h > nh - th:
         logger.debug("QR code is too large for sticker.")
-        sf = (nh-th)/h
-        newqrw = int(w*sf)
-        img = img.resize((newqrw, int(h*sf)))
+        sf = (nh - th) / h
+        newqrw = int(w * sf)
+        img = img.resize((newqrw, int(h * sf)))
         logger.debug(f"QR code was resized to {img.size}")
     # paste the new image into the background on 0,0
     background.paste(img)
@@ -166,21 +170,20 @@ def create_qr_sticker_image(link,
             long_text_width = nh
             logger.debug(f"Long text width not given, setting to nh {nh}")
         startltx = img.size[0]
-        width = max(nw-startltx, long_text_width)
+        width = max(nw - startltx, long_text_width)
         logger.debug(f"The long text will start at x = {startltx}")
         logger.debug(f"The width of the long text will be {width}")
         if width >= nh:
             logger.debug(f"The text width {width} is at least the height {nh}")
             offset = 0
-            for line in textwrap.wrap(long_text, width//int(0.7*font_size)):
-                if offset > nh-th:
+            for line in textwrap.wrap(long_text, width // int(0.7 * font_size)):
+                if offset > nh - th:
                     warnings.warn("The long text does not fit the sticker")
                     break
                 draw.text((startltx, offset), line, font=font)
                 offset += font.getsize(line)[1]
         else:
-            warnings.warn("There is insufficient space "
-                          "for long text.")
+            warnings.warn("There is insufficient space " "for long text.")
     # rotate again if the stickers are to be printed horizontally
     if swapped:
         background = background.rotate(90, expand=True)
@@ -189,48 +192,85 @@ def create_qr_sticker_image(link,
 
 def get_args_cli():
     parser = argparse.ArgumentParser()
-    parser.add_argument("data", type=str,
-                        help="String to turn into QR code")
-    parser.add_argument("-p", "--printsize", type=str,
-                        choices=sticker_sizes.keys(),
-                        help="Sticker dimensions",
-                        default=defaults["printsize"])
-    parser.add_argument("-o", "--output", type=str,
-                        help="Path to output file",
-                        default=defaults["output_path"])
-    parser.add_argument("-s", "--short", type=str,
-                        help="Short text printed under QR code",
-                        default=defaults["short_text"])
-    parser.add_argument("-l", "--long", type=str,
-                        help="Long text to print next to QR code",
-                        default=defaults["long_text"])
-    parser.add_argument("-w", "--longwidth", type=str,
-                        help="Width of long text",
-                        default=None)
-    parser.add_argument("-d", "--font_path", type=str,
-                        help="Path to a font file",
-                        default=defaults["font"])
-    parser.add_argument("-f", "--fontsize", type=int,
-                        help="Font size of small and big text",
-                        default=defaults["font_size"])
-    parser.add_argument("-q", "--qr_size", type=int,
-                        help=("Pixel width of QR code"),
-                        default=None)
-    parser.add_argument("-v", "--version", type=int,
-                        help="Size of QR code (1-40). Default optimized.",
-                        default=qr_defaults["version"])
-    parser.add_argument("-e", "--error_correction", type=str,
-                        choices=["L", "M", "Q", "H"],
-                        help="Error correction level",
-                        default=qr_defaults["error_correction"])
-    parser.add_argument("-n", "--box_size", type=int,
-                        help=("Number of pixels each box of "
-                              "QR code is"),
-                        default=qr_defaults["box_size"])
-    parser.add_argument("-b", "--border", type=int,
-                        help=("Number of pixels the border "
-                              "should be"),
-                        default=qr_defaults["border"])
+    parser.add_argument("data", type=str, help="String to turn into QR code")
+    parser.add_argument(
+        "-p",
+        "--printsize",
+        type=str,
+        choices=sticker_sizes.keys(),
+        help="Sticker dimensions",
+        default=defaults["printsize"],
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        help="Path to output file",
+        default=defaults["output_path"],
+    )
+    parser.add_argument(
+        "-s",
+        "--short",
+        type=str,
+        help="Short text printed under QR code",
+        default=defaults["short_text"],
+    )
+    parser.add_argument(
+        "-l",
+        "--long",
+        type=str,
+        help="Long text to print next to QR code",
+        default=defaults["long_text"],
+    )
+    parser.add_argument(
+        "-w", "--longwidth", type=str, help="Width of long text", default=None
+    )
+    parser.add_argument(
+        "-d",
+        "--font_path",
+        type=str,
+        help="Path to a font file",
+        default=defaults["font"],
+    )
+    parser.add_argument(
+        "-f",
+        "--fontsize",
+        type=int,
+        help="Font size of small and big text",
+        default=defaults["font_size"],
+    )
+    parser.add_argument(
+        "-q", "--qr_size", type=int, help=("Pixel width of QR code"), default=None
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        type=int,
+        help="Size of QR code (1-40). Default optimized.",
+        default=qr_defaults["version"],
+    )
+    parser.add_argument(
+        "-e",
+        "--error_correction",
+        type=str,
+        choices=["L", "M", "Q", "H"],
+        help="Error correction level",
+        default=qr_defaults["error_correction"],
+    )
+    parser.add_argument(
+        "-n",
+        "--box_size",
+        type=int,
+        help=("Number of pixels each box of " "QR code is"),
+        default=qr_defaults["box_size"],
+    )
+    parser.add_argument(
+        "-b",
+        "--border",
+        type=int,
+        help=("Number of pixels the border " "should be"),
+        default=qr_defaults["border"],
+    )
     return parser.parse_args()
 
 
@@ -243,9 +283,15 @@ def main():
         "border": p.border,
     }
     background = create_qr_sticker_image(
-            p.data, p.printsize, small_text=p.short,
-            long_text=p.long, long_text_width=None, font_size=p.fontsize,
-            qr_properties=extraparams, font_path=p.font_path)
+        p.data,
+        p.printsize,
+        small_text=p.short,
+        long_text=p.long,
+        long_text_width=None,
+        font_size=p.fontsize,
+        qr_properties=extraparams,
+        font_path=p.font_path,
+    )
     # save the image
     background.save(p.output)
 
