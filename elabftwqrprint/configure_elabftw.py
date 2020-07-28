@@ -1,38 +1,46 @@
-import yaml
-import elabapy
-from requests.exceptions import HTTPError
-import os
-from . import _global_defaults as gconf
+import sys
 from pathlib import Path
 
+import elabapy
+import yaml
+from requests.exceptions import HTTPError
+
+from . import _global_defaults as gconf
+
+CONFIG_FILENAME = "elabconfig.yaml"
 
 def main():
-    conf_path = os.path.expanduser(gconf.CONFIG_FOLDER)
-    if not os.path.isdir(conf_path):
-        os.mkdir(conf_path)
-    # which server will you connect to?
-    server = input("Which elabFTW server will you connect to (e.g. elab.exampl"
-                   "e.org)? ")
-    token = input("Enter your API access token (create one in user settings on"
-                  " website): ")
+    conf_path = Path.home().joinpath(gconf.CONFIG_FOLDER)
+    conf_file = conf_path.joinpath(CONFIG_FILENAME)
+
+    # create config path
+    Path.mkdir(conf_path, exist_ok=True)
+
+    # ask info to user before creating the config file
+    server = input(
+        "Which elabFTW server will you connect to (e.g. elab.example.org)? "
+    )
+    token = input(
+        "Enter your API access token (create one in user settings on website): "
+    )
+    verify = input(
+        "Verify the certificate? (default: yes) ([yes]/no) "
+    )
+    veriflag = verify != "no"
+
     # test the connection
     urlapi = f"https://{server}/api/v1/"
-    manager = elabapy.Manager(endpoint=urlapi, token=token)
+    manager = elabapy.Manager(endpoint=urlapi, token=token, verify=veriflag)
     try:
         manager.get_items_types()
-        success = True
     except HTTPError as e:
         print(e)
-        success = False
-    if success:
-        info = {
-                "endpoint": urlapi,
-                "token": token,
-                "domain_name": server
-                }
-        with open(str(Path(conf_path+"/elabconfig.yaml")), "w") as f:
-            yaml.dump(info, f)
-        print("Successfully connected, wrote out config file.")
+        sys.exit(1)
+
+    info = {"endpoint": urlapi, "token": token, "domain_name": server}
+    with conf_file.open("w") as f:
+        yaml.dump(info, f)
+    print(f"Successfully connected, wrote out config file: {conf_file}")
 
 
 if __name__ == "__main__":

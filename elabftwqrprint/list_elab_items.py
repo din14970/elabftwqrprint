@@ -1,12 +1,13 @@
-from . import _elabftw_interface as elabqr
 import argparse
+
+from . import _elabftw_interface as elabqr
 
 
 def get_args_cli():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--category", type=str,
-                        help="Limit results to one category",
-                        default=None)
+    parser.add_argument(
+        "-c", "--category", type=str, help="Limit results to one category", default=None
+    )
     return parser.parse_args()
 
 
