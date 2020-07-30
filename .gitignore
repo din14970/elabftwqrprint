@@ -5,3 +5,5 @@
 tags
 *.egg-info
 .venv_test
+build/
+dist/

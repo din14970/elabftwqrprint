@@ -7,7 +7,7 @@ from requests.exceptions import HTTPError
 
 from . import _global_defaults as gconf
 
-CONFIG_FILENAME = "elabconfig.yaml"
+CONFIG_FILENAME = gconf.CONFIG_FILENAME
 
 def main():
     conf_path = Path.home().joinpath(gconf.CONFIG_FOLDER)

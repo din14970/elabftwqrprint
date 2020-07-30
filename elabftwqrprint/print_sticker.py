@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 import os
 
 import yaml
@@ -7,10 +8,8 @@ from . import _global_defaults as gconf
 
 
 def print_image(filename):
-    conf_path = os.path.expanduser(gconf.CONFIG_FOLDER)
-    if not os.path.isdir(conf_path):
-        os.mkdir(conf_path)
-    print_config_file = conf_path + "/printerconfig.yaml"
+    conf_path = Path.home().joinpath(gconf.CONFIG_FOLDER)
+    print_config_file = conf_path.joinpath(gconf.PRINT_CONFIG_FILENAME)
     try:
         with open(print_config_file) as f:
             print_conf = yaml.load(f)

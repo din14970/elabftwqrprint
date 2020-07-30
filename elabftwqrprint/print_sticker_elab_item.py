@@ -1,5 +1,5 @@
 import argparse
-import os
+from pathlib import Path
 
 from . import _elabftw_interface as elabqr
 from . import _global_defaults as gconf
@@ -7,10 +7,8 @@ from . import print_sticker as print_image
 
 
 def main():
-    conf_path = os.path.expanduser(gconf.CONFIG_FOLDER)
-    if not os.path.isdir(conf_path):
-        os.mkdir(conf_path)
-    default_path = conf_path + "/last_sticker.png"
+    conf_path = Path.home().joinpath(gconf.CONFIG_FOLDER)
+    default_path = conf_path.joinpath(gconf.DEFAULT_SAVE_LOCATION)
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "id_no", type=str, help="Database item to create QR-sticker for"

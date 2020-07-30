@@ -4,7 +4,8 @@ import yaml
 
 from . import _global_defaults as gconf
 
-CONFIG_FILENAME = "printerconfig.yaml"
+CONFIG_FILENAME = gconf.PRINT_CONFIG_FILENAME
+
 
 def main():
     conf_path = Path.home().joinpath(gconf.CONFIG_FOLDER)

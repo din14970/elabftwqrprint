@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import argparse
 import logging
 import textwrap
@@ -29,9 +31,11 @@ qr_defaults = {
 }
 
 
+conf_path = Path.home().joinpath(gconf.CONFIG_FOLDER)
+default_save = gconf.DEFAULT_SAVE_LOCATION
 defaults = {
     "printsize": gconf.PRINTSIZE,
-    "output_path": gconf.OUTPUT_PATH,
+    "output_path": conf_path.joinpath(default_save),
     "short_text": gconf.SHORT_TEXT,
     "long_text": gconf.LONG_TEXT,
     "font": gconf.FONT,

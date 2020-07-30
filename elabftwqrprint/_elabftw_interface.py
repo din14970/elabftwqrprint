@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import elabapy
 import yaml
@@ -8,9 +8,8 @@ from tabulate import tabulate
 from . import _global_defaults as gconf
 from . import create_qr_sticker as main
 
-conf_path = os.path.expanduser(gconf.CONFIG_FOLDER)
-configfile = conf_path + "/elabconfig.yaml"
-
+conf_path = Path.home().joinpath(gconf.CONFIG_FOLDER)
+configfile = conf_path.joinpath(gconf.CONFIG_FILENAME)
 
 def initialize():
     try:

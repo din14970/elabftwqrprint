@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import qrcode
 
 STICKER_SIZES = {
@@ -34,12 +32,14 @@ ERROR_CORRECT = {
     "H": qrcode.constants.ERROR_CORRECT_H,
 }
 CONFIG_FOLDER = ".elabftwqrprint"
+CONFIG_FILENAME = "elabconfig.yaml"
+PRINT_CONFIG_FILENAME = "printerconfig.yaml"
+DEFAULT_SAVE_LOCATION = "last_sticker.png"
 VERSION = None
 ERROR_CORRECTION = ERROR_CORRECT["M"]
 BORDER = 4
 BOX_SIZE = 10
 PRINTSIZE = "29x90"
-OUTPUT_PATH = str(Path("./qrcode.png"))
 SHORT_TEXT = ""
 LONG_TEXT = ""
 FONT = "./Andale Mono.ttf"
