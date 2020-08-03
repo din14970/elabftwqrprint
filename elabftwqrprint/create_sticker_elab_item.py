@@ -26,10 +26,10 @@ def _create_qr_elab_sticker(p):
     p.data = link
     short_desc = f"{item['date']} {item['title']}"
     print(f"Will create QR sticker for link {link} and title {short_desc}")
-    if p.short_text:
-        short_desc = p.short_text
+    if not p.short_text:
+        p.short_text = short_desc
     if p.no_short_text:
-        short_desc = ""
+        p.short_text = ""
     cqs._create_qr_sticker_params(p)
     print(f"Created QR sticker for item {p.id_no} at {p.output}")
 
