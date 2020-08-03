@@ -5,7 +5,7 @@ with open("README.md") as f:
 
 setup(
     name="elabftwqrprint",
-    version="0.0.4",
+    version="0.0.5",
     description=("Make QR code stickers for elabFTW database"
                  " entries and print them with Brother label "
                  "printers."),
@@ -34,6 +34,7 @@ setup(
               'list_elab_items = elabftwqrprint.list_elab_items:main',
               'print_sticker_elab_item = elabftwqrprint.print_sticker_elab_item:main',
               'print_sticker = elabftwqrprint.print_sticker:main',
+              'find_items = elabftwqrprint.find_items:main'
           ],
       },
     package_data={'': ['elabftwqrprint/defaultfont.ttf']},

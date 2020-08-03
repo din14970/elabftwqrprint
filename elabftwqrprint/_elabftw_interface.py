@@ -8,7 +8,6 @@ import yaml
 from tabulate import tabulate
 
 from . import _global_defaults as gconf
-from . import create_qr_sticker as main
 
 conf_path = Path.home().joinpath(gconf.CONFIG_FOLDER)
 configfile = conf_path.joinpath(gconf.CONFIG_FILENAME)
@@ -33,17 +32,46 @@ def initialize():
     return manager
 
 
-def list_items(category=None):
+def list_items(category=None, match_string=None, mindate=None, maxdate=None):
     manager = initialize()
-    if manager:
-        all_items = manager.get_all_items()
-        table = [["ID", "Date", "Category", "Name"]]
-        for i in all_items:
-            if category is not None:
-                if i["category"] != category:
-                    continue
-            table.append([i["id"], i["date"], i["category"], i["title"]])
-        print(tabulate(table, headers="firstrow"))
+    all_items = manager.get_all_items()
+    table = [["ID", "Date", "Category", "Name"]]
+    for i in all_items:
+        if category is not None:
+            if i["category"] != category:
+                continue
+        if match_string is not None:
+            if match_string not in i["title"]:
+                continue
+        if mindate is not None:
+            if int(i["date"]) < mindate:
+                continue
+        if maxdate is not None:
+            if int(i["date"]) > maxdate:
+                continue
+        table.append([i["id"], i["date"], i["category"], i["title"]])
+    print(tabulate(table, headers="firstrow"))
+
+
+def get_item_ids(category=None, match_string=None, mindate=None, maxdate=None):
+    manager = initialize()
+    all_items = manager.get_all_items()
+    ids = []
+    for i in all_items:
+        if category is not None:
+            if i["category"] != category:
+                continue
+        if match_string is not None:
+            if match_string not in i["title"]:
+                continue
+        if mindate is not None:
+            if int(i["date"]) < mindate:
+                continue
+        if maxdate is not None:
+            if int(i["date"]) > maxdate:
+                continue
+        ids.append(i["id"])
+    return ids
 
 
 def _get_domain_name():

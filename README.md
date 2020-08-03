@@ -40,6 +40,7 @@ After successfully creating the configuration, you can use the following command
 
 ```bash
 $ list_elab_items  # view a table of your database items in the command line
+$ find_items  # get a list of item id's that fit certain criteria
 
 $ create_qr_sticker [TEXT]  # turn any string into a QR code sticker of a dimension suitable for the Brother printers
 $ create_sticker_elab_item [ID]  # create a QR code sticker image from a database item in your elabFTW instance and save to a file
@@ -48,7 +49,16 @@ $ print_sticker_elab_item [ID]  # directly print a QR code sticker from a databa
 $ print_sticker [FILENAME]  # print a sticker from a file
 ```
 
-Each command has a number of options to control how the sticker looks, e.g. font, font size, QR code size, longer description to print next to the QR code... You can check the different options with the `-h` or `--help` flags.
+You can check the different options with the `-h` or `--help` flags.
+The list and find commands have options to control which items get returned - you can specify categories, date boundaries and partial search strings for titles.
+The commands to create sticker images have a number of options to control how the stickers look, e.g. font, font size, QR code size, longer description to print next to the QR code...
+
+The `print_sticker_elab_item [ID]` command should be the bread and butter command. You can feed it one ID derived from `list_elab_items` or multiple. A recently added feature is that you can directly pipe id's from `find_items` to `print_sticker_elab_item`. For example:
+
+```
+$ find_items -s "copper" -m 20200301 | print_sticker_elab_item
+```
+should sequentially print all the database items that contain "copper" in the title and were created after 31/03/2020.
 
 In addition, you can manually create the config file `~/.elabftwqrprint/formatting.yaml`, with which you can override a number of defaults. The following options are recognized:
 ```yaml
@@ -67,6 +77,12 @@ max_qr_size: # maximum side length of QR code in pixels.
 ```
 
 ## Changelog
+
+### v0.0.5
+* minor bugfixes
+* added feature to allow multiple stickers to be printed with one command
+* added more advanced search functionality
+* added feature to allow search to be piped directly to print
 
 ### v0.0.3
 * fixed some bugs related to sticker rotation

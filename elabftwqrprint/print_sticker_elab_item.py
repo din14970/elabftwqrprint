@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from . import _cli_args as cli
 from . import create_sticker_elab_item as crstelab
@@ -9,8 +10,13 @@ def get_args_cli():
     parser = argparse.ArgumentParser()
     parser.add_argument(
             "id_no",
-            type=int,
-            help="Database item to create QR-sticker for")
+            type=str,
+            nargs="*",
+            help=(
+                "Id(s) of database item or items to "
+                "create QR-sticker for"),
+            default=sys.stdin,
+    )
     parser = cli.add_args_sticker_basic_content(parser)
     parser = cli.add_args_sticker_layout(parser)
     parser = cli.add_output_args(parser)
@@ -21,9 +27,13 @@ def get_args_cli():
 
 def main():
     p = get_args_cli()
-    crstelab._create_qr_elab_sticker(p)
-    p.filename = p.output
-    print_image.print_image(p)
+    all_stickers = p.id_no
+    for i in all_stickers:
+        p.id_no = i
+        crstelab._create_qr_elab_sticker(p)
+        p.filename = p.output
+        print_image.print_image(p)
+        print(f"Printed item {i}")
 
 
 if __name__ == "__main__":
