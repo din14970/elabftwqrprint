@@ -5,7 +5,7 @@ import qrcode
 
 
 folder = os.path.split(__file__)[0]
-default_font_path = os.path.join(folder, "Andale Mono.ttf")
+default_font_path = os.path.join(folder, "defaultfont.ttf")
 
 STICKER_SIZES = {
     "12": (106, None),

@@ -5,7 +5,7 @@ with open("README.md") as f:
 
 setup(
     name="elabftwqrprint",
-    version="0.0.3",
+    version="0.0.4",
     description=("Make QR code stickers for elabFTW database"
                  " entries and print them with Brother label "
                  "printers."),
@@ -36,14 +36,14 @@ setup(
               'print_sticker = elabftwqrprint.print_sticker:main',
           ],
       },
-    package_data={'': ['elabftwqrprint/Andale Mono.ttf']},
+    package_data={'': ['elabftwqrprint/defaultfont.ttf']},
     include_package_data=True,
     install_requires=[
-        'brother-ql',
-        'elabapy',
-        'pyyaml',
-        'Pillow',
-        'tabulate',
-        'qrcode',
+        'brother-ql>=0.9.4',
+        'elabapy>=0.6.1',
+        'pyyaml>=5.1',
+        'Pillow>=7.2.0',
+        'tabulate>=0.8.7',
+        'qrcode>=6.1',
     ],
 )
