@@ -36,11 +36,17 @@ def main():
         "102, 17x54, 17x87, 23x23, 29x42, 29x90, 39x90, 39x48, 52x29, "
         "62x29, 62x100, 102x51, 102x152, d12, d24, d58]: "
     )
+    red_label = input(
+            "Do you use red tape (for QL-8xx and DK-22251 printers)? "
+            "(default = no)(yes|[no])"
+            )
+    verired = red_label == "yes"
     info = {
         "printer": printer,
         "backend": backend,
         "identifyer": identifyer,
         "labelsize": labelsize,
+        "red_tape": verired,
     }
 
     with conf_file.open("w") as f:

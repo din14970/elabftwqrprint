@@ -1,6 +1,8 @@
 from pathlib import Path
+import sys
 
 import elabapy
+from requests.exceptions import HTTPError
 import yaml
 
 from tabulate import tabulate
@@ -11,15 +13,23 @@ from . import create_qr_sticker as main
 conf_path = Path.home().joinpath(gconf.CONFIG_FOLDER)
 configfile = conf_path.joinpath(gconf.CONFIG_FILENAME)
 
+
 def initialize():
     try:
         with open(configfile) as f:
             config = yaml.load(f, Loader=yaml.FullLoader)
     except Exception:
-        print("Unable to find or open config file. Run configure_elabftw first.")
-        return
-
-    manager = elabapy.Manager(endpoint=config["endpoint"], token=config["token"])
+        print("Unable to find or open config file. "
+              "Run configure_elabftw first.")
+        sys.exit(1)
+    manager = elabapy.Manager(
+            endpoint=config["endpoint"],
+            token=config["token"])
+    try:
+        manager.get_items_types()
+    except HTTPError as e:
+        print(e)
+        sys.exit(1)
     return manager
 
 
@@ -40,21 +50,13 @@ def _get_domain_name():
     try:
         with open(configfile) as f:
             config = yaml.load(f, Loader=yaml.FullLoader)
-        domain = config["domain_name"]
     except Exception:
-        print("Unable to find or open config file. Run configure_elabftw first.")
-        return
+        print("Unable to find or open config file. "
+              "Run configure_elabftw first.")
+        sys.exit(1)
+    try:
+        domain = config["domain_name"]
+    except Exception as e:
+        print(e)
+        sys.exit(1)
     return domain
-
-
-def make_qrcode_item(id_no, filename, **kwargs):
-    manager = initialize()
-    if not manager:
-        return
-    item = manager.get_item(id_no)
-    servname = _get_domain_name()
-    link = f"https://{servname}/database.php?mode=view&id={id_no}"
-    short_desc = f"{item['date']} {item['title']}"
-    print(f"Will create QR sticker for link {link} and title {short_desc}")
-    sticker = main.create_qr_sticker_image(link, small_text=short_desc, **kwargs)
-    sticker.save(filename)
