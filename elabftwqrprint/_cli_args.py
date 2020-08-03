@@ -144,7 +144,7 @@ def add_args_print(parser):
             "-m",
             "--rotate_print",
             choices=["auto", "0", "90", "180", "270"],
-            default=0,
+            default="auto",
             help=(
                 "Rotate the print image (counterclock-wise) by this amount"
                 " of degrees"
