@@ -27,9 +27,15 @@ def get_args_cli():
 
 def main():
     p = get_args_cli()
+    # if a short text is provided it overrides the default
+    override_short_text = False
+    if p.short_text:
+        override_short_text = True
     all_stickers = p.id_no
     for i in all_stickers:
         p.id_no = i
+        if not override_short_text:
+            p.short_text = ""
         crstelab._create_qr_elab_sticker(p)
         p.filename = p.output
         print_image.print_image(p)
