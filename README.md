@@ -58,7 +58,7 @@ The `print_sticker_elab_item [ID]` command should be the bread and butter comman
 ```
 $ find_items -s "copper" -m 20200301 | print_sticker_elab_item
 ```
-should sequentially print all the database items that contain "copper" in the title and were created after 31/03/2020.
+should sequentially print all the database items that contain "copper" in the title and were created after 01/03/2020.
 
 In addition, you can manually create the config file `~/.elabftwqrprint/formatting.yaml`, with which you can override a number of defaults. The following options are recognized:
 ```yaml
