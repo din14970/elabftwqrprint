@@ -5,7 +5,7 @@ with open("README.md") as f:
 
 setup(
     name="elabftwqrprint",
-    version="0.0.5",
+    version="0.0.6",
     description=("Make QR code stickers for elabFTW database"
                  " entries and print them with Brother label "
                  "printers."),
