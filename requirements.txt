@@ -25,7 +25,7 @@ Pygments==2.6.1
 pynvim==0.4.1
 pyparsing==2.4.7
 pyusb==1.0.2
-PyYAML==5.3.1
+PyYAML==5.4
 qrcode==6.1
 readme-renderer==26.0
 requests==2.24.0
