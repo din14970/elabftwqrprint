@@ -17,7 +17,7 @@ msgpack==1.0.0
 numpy==1.19.1
 packaging==20.4
 packbits==0.6
-Pillow==8.1.1
+Pillow==8.2.0
 pkginfo==1.5.0.1
 pycodestyle==2.6.0
 pyflakes==2.2.0
