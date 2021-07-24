@@ -53,7 +53,8 @@ You can check the different options with the `-h` or `--help` flags.
 The list and find commands have options to control which items get returned - you can specify categories, date boundaries and partial search strings for titles.
 The commands to create sticker images have a number of options to control how the stickers look, e.g. font, font size, QR code size, longer description to print next to the QR code...
 
-The `print_sticker_elab_item [ID]` command should be the bread and butter command. You can feed it one ID derived from `list_elab_items` or multiple. A recently added feature is that you can directly pipe id's from `find_items` to `print_sticker_elab_item`. For example:
+The `print_sticker_elab_item [ID]` command should be the bread and butter command. You can feed it one ID derived from `list_elab_items` or multiple.
+You may also pipe id's from `find_items` to `print_sticker_elab_item`. For example:
 
 ```
 $ find_items -s "copper" -m 20200301 | print_sticker_elab_item
@@ -77,6 +78,10 @@ max_qr_size: # maximum side length of QR code in pixels.
 ```
 
 ## Changelog
+
+### v0.1.0
+* bugfixes related to the `verify` flag to allow connections to local installs
+* added the options to pass eLabFTW connection arguments and printer configuration arguments in the relevant commands when one doesn't want to use the configuration from the config files
 
 ### v0.0.5
 * minor bugfixes
