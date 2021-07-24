@@ -1,11 +1,35 @@
 from pathlib import Path
+import warnings
 import os
 import yaml
 import qrcode
 
 
+def get_endpoint(URL):
+    return f"{URL}/api/v1/"
+
+
 folder = os.path.split(__file__)[0]
-default_font_path = os.path.join(folder, "defaultfont.ttf")
+DEFAULT_FONT_PATH = os.path.join(folder, "defaultfont.ttf")
+
+SUPPORTED_MODELS = ["QL-500",
+                    "QL-550",
+                    "QL-560",
+                    "QL-570",
+                    "QL-580N",
+                    "QL-650TD",
+                    "QL-700",
+                    "QL-710W",
+                    "QL-720NW",
+                    "QL-800",
+                    "QL-810W",
+                    "QL-820NWB",
+                    "QL-1050",
+                    "QL-1060N",
+                    ]
+
+PRINTER_BACKENDS = ["pyusb", "network", "linux_kernel"]
+PRINTER_ROTATE_OPTIONS = ["auto", "0", "90", "180", "270"]
 
 STICKER_SIZES = {
     "12": (106, None),
@@ -42,76 +66,60 @@ CONFIG_FOLDER = ".elabftwqrprint"
 CONFIG_FILENAME = "elabconfig.yaml"
 PRINT_CONFIG_FILENAME = "printerconfig.yaml"
 FORMAT_CONFIG_FILENAME = "formatting.yaml"
+
 # mutable defaults - if they are in a config file it is read,
 # otherwise a reasonable default is given
+conf_path = Path.home().joinpath(CONFIG_FOLDER)
+
 try:
-    conf_path = Path.home().joinpath(CONFIG_FOLDER)
+    configfile = conf_path.joinpath(CONFIG_FILENAME)
+    with open(configfile) as f:
+        connection_config = yaml.load(f, Loader=yaml.FullLoader)
+except Exception as e:
+    warnings.warn(f"Could not load eLabFTW config file: {e}. If this is unintentional make sure you run the 'configure_elabftw' script.")
+    connection_config = {}
+
+URL = connection_config.get("url", None)
+TOKEN = connection_config.get("token", None)
+VERIFY = connection_config.get("verify", None)
+
+try:
     print_conf_file = conf_path.joinpath(PRINT_CONFIG_FILENAME)
     with open(print_conf_file) as f:
         print_config = yaml.load(f, Loader=yaml.FullLoader)
-except Exception:
-    print_config = None
+except Exception as e:
+    warnings.warn(f"Could not load printer config file: {e}. If this is unintentional make sure you run the 'configure_printer' script.")
+    print_config = {}
+
+PRINTER_TYPE = print_config.get("printer", None)
+PRINTER_BACKEND = print_config.get("backend", None)
+PRINTER_ID = print_config.get("identifyer", None)
+PRINTSIZE = print_config.get("labelsize", "29x90")
+PRINT_RED = print_config.get("red_tape", False)
+ROTATE_PRINT = print_config.get("rotate_print", "auto")
+
 try:
-    conf_path = Path.home().joinpath(CONFIG_FOLDER)
     format_config_file = conf_path.joinpath(FORMAT_CONFIG_FILENAME)
     with open(format_config_file) as f:
         format_config = yaml.load(f, Loader=yaml.FullLoader)
 except Exception:
-    format_config = None
+    format_config = {}
 
-# saving images
-try:
-    DEFAULT_SAVE_NAME = format_config["default_save_name"]
-except Exception:
-    DEFAULT_SAVE_NAME = "last_sticker.png"
-try:
-    DEFAULT_SAVE_LOCATION = Path(format_config["default_save_folder"])
-except Exception:
-    DEFAULT_SAVE_LOCATION = conf_path
+# Image saving defaults
+DEFAULT_SAVE_NAME = format_config.get("default_save_name", "last_sticker.png")
+DEFAULT_SAVE_LOCATION = Path(format_config.get("default_save_folder",
+                                               conf_path))
+DEFAULT_SAVE_PATH = Path.joinpath(DEFAULT_SAVE_LOCATION, DEFAULT_SAVE_NAME)
+
 # QR code defaults
-try:
-    VERSION = format_config["version"]
-except Exception:
-    VERSION = None
-try:
-    ERROR_CORRECTION = format_config["error_correction"]
-except Exception:
-    ERROR_CORRECTION = ERROR_CORRECT["M"]
-try:
-    BORDER = format_config["border"]
-except Exception:
-    BORDER = 4
-try:
-    BOX_SIZE = format_config["box_size"]
-except Exception:
-    BOX_SIZE = 10
-# layout defaults
-try:
-    SHORT_TEXT = format_config["short_text"]
-except Exception:
-    SHORT_TEXT = ""
-try:
-    LONG_TEXT = format_config["long_text"]
-except Exception:
-    LONG_TEXT = ""
-try:
-    FONT = format_config["font"]
-except Exception:
-    FONT = default_font_path
-try:
-    FONT_SIZE = format_config["font_size"]
-except Exception:
-    FONT_SIZE = 18
-try:
-    LONG_TEXT_WIDTH = format_config["long_text_width"]
-except Exception:
-    LONG_TEXT_WIDTH = None
-try:
-    QR_SIZE = format_config["max_qr_size"]
-except Exception:
-    QR_SIZE = None
-
-try:
-    PRINTSIZE = print_config["labelsize"]
-except Exception:
-    PRINTSIZE = "29x90"
+VERSION = format_config.get("version")
+ERROR_CORRECTION = format_config.get("error_correction", ERROR_CORRECT["M"])
+BORDER = format_config.get("border", 4)
+BOX_SIZE = format_config.get("box_size", 10)
+# sticker layout defaults
+SHORT_TEXT = format_config.get("short_text", "")
+LONG_TEXT = format_config.get("long_text", "")
+FONT = format_config.get("font", DEFAULT_FONT_PATH)
+FONT_SIZE = format_config.get("font_size", 18)
+LONG_TEXT_WIDTH = format_config.get("long_text_width")
+QR_SIZE = format_config.get("max_qr_size")

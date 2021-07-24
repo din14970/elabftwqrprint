@@ -2,6 +2,7 @@ import argparse
 import sys
 
 from . import _elabftw_interface as elabqr
+from . import _cli_args as cli
 
 
 def get_args_cli():
@@ -29,6 +30,7 @@ def get_args_cli():
             type=int,
             help="Maximum date for database items. Must be in form YYYYMMDD.",
             )
+    parser = cli.add_args_elab_connection(parser)
     return parser.parse_args()
 
 
@@ -38,7 +40,11 @@ def main():
             category=p.category,
             match_string=p.search,
             mindate=p.min_date,
-            maxdate=p.max_date)
+            maxdate=p.max_date,
+            url=p.url,
+            token=p.token,
+            verify=p.do_not_verify==False,
+            )
 
 
 if __name__ == "__main__":

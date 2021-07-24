@@ -8,7 +8,11 @@ def main():
             category=p.category,
             match_string=p.search,
             mindate=p.min_date,
-            maxdate=p.max_date)
+            maxdate=p.max_date,
+            url=p.url,
+            token=p.token,
+            verify=p.do_not_verify==False,
+            )
     for i in val:
         print(i)
 

@@ -18,9 +18,11 @@ def get_args_cli():
             default=sys.stdin,
     )
     parser = cli.add_args_sticker_basic_content(parser)
+    parser = cli.add_arg_sticker_size(parser)
     parser = cli.add_args_sticker_layout(parser)
     parser = cli.add_output_args(parser)
-    parser = cli.add_args_print(parser)
+    parser = cli.add_args_printer(parser)
+    parser = cli.add_args_elab_connection(parser)
     p = parser.parse_args()
     return p
 
@@ -32,14 +34,22 @@ def main():
     if p.short_text:
         override_short_text = True
     all_stickers = p.id_no
+    failures = []
     for i in all_stickers:
+        i = int(i)
         p.id_no = i
         if not override_short_text:
             p.short_text = ""
         crstelab._create_qr_elab_sticker(p)
         p.filename = p.output
-        print_image.print_image(p)
-        print(f"Printed item {i}")
+        try:
+            print_image.print_image(p)
+            print(f"Printed item {i}")
+        except Exception as e:
+            print(f"Could not print item {i}: {e}")
+            failures.append(i)
+    if failures:
+        print("Failed to print items: ", failures)
 
 
 if __name__ == "__main__":

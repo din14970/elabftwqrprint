@@ -1,2 +1,3 @@
 include LICENSE
 include elabftwqrprint/defaultfont.ttf
+include requirements.txt

@@ -54,8 +54,7 @@ def add_args_sticker_basic_content(parser):
     return parser
 
 
-# all arguments associated with how the sticker looks
-def add_args_sticker_layout(parser):
+def add_arg_sticker_size(parser):
     parser.add_argument(
         "-p",
         "--printsize",
@@ -64,6 +63,11 @@ def add_args_sticker_layout(parser):
         help="Sticker dimensions",
         default=defaults["printsize"],
     )
+    return parser
+
+
+# all arguments associated with how the sticker looks
+def add_args_sticker_layout(parser):
     parser.add_argument(
         "-w",
         "--longwidth",
@@ -100,7 +104,7 @@ def add_args_sticker_layout(parser):
         "-e",
         "--error_correction",
         type=str,
-        choices=["L", "M", "Q", "H"],
+        choices=gconf.ERROR_CORRECT.keys(),
         help="Error correction level",
         default=qr_defaults["error_correction"],
     )
@@ -108,7 +112,7 @@ def add_args_sticker_layout(parser):
         "-n",
         "--box_size",
         type=int,
-        help=("Number of pixels each box of " "QR code is"),
+        help=("Number of pixels each box of QR code is"),
         default=qr_defaults["box_size"],
     )
     parser.add_argument(
@@ -119,11 +123,6 @@ def add_args_sticker_layout(parser):
             "Number of squares the border of the QR code should be"
             ),
         default=qr_defaults["border"],
-    )
-    parser.add_argument(
-        "--rotate",
-        help=("Rotate the final image by 90 degrees"),
-        action="store_true",
     )
     return parser
 
@@ -139,14 +138,60 @@ def add_output_args(parser):
     return parser
 
 
-def add_args_print(parser):
+def add_args_printer(parser):
     parser.add_argument(
-            "-m",
+            "--printer_type",
+            default=gconf.PRINTER_TYPE,
+            choices=gconf.SUPPORTED_MODELS,
+            help=(
+                "Type of Brother label printer (see brother_ql documentation)"
+                ))
+    parser.add_argument(
+            "--printer_backend",
+            default=gconf.PRINTER_BACKEND,
+            choices=gconf.PRINTER_BACKENDS,
+            help=(
+                "Printer backend (see brother_ql documentation)"
+                ))
+    parser.add_argument(
+            "--printer_id",
+            default=gconf.PRINTER_ID,
+            help=(
+                "Printer identifyer (see brother_ql documentation)"
+                ))
+    parser.add_argument(
             "--rotate_print",
-            choices=["auto", "0", "90", "180", "270"],
-            default="auto",
+            choices=gconf.PRINTER_ROTATE_OPTIONS,
+            default=gconf.ROTATE_PRINT,
             help=(
                 "Rotate the print image (counterclock-wise) by this amount"
-                " of degrees"
+                " of degrees. With auto it is automatically adjusted."
+                ))
+    parser.add_argument(
+        "--use_red_tape",
+        action="store_true",
+        help=("Print as red tape"),
+    )
+    return parser
+
+
+def add_args_elab_connection(parser):
+    parser.add_argument(
+            "--url",
+            default=gconf.URL,
+            help=(
+                "URL to the eLabFTW instance (e.g. https://elab.example.com)"
+                ))
+    parser.add_argument(
+            "--token",
+            default=gconf.TOKEN,
+            help=(
+                "Token to access the eLabFTW instance"
+                ))
+    parser.add_argument(
+            "--do_not_verify",
+            action="store_true",
+            help=(
+                "Don't verify the certificate, overriding any default."
                 ))
     return parser

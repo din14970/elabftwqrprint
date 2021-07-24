@@ -3,9 +3,12 @@ from setuptools import setup, find_packages
 with open("README.md") as f:
     readme = f.read()
 
+with open("requirements.txt") as f:
+    requirements = f.readlines()
+
 setup(
     name="elabftwqrprint",
-    version="0.0.6",
+    version="0.1.0",
     description=("Make QR code stickers for elabFTW database"
                  " entries and print them with Brother label "
                  "printers."),
@@ -39,12 +42,5 @@ setup(
       },
     package_data={'': ['elabftwqrprint/defaultfont.ttf']},
     include_package_data=True,
-    install_requires=[
-        'brother-ql>=0.9.4',
-        'elabapy>=0.6.1',
-        'pyyaml>=5.1',
-        'Pillow>=7.2.0',
-        'tabulate>=0.8.7',
-        'qrcode>=6.1',
-    ],
+    install_requires=requirements,
 )
