@@ -1,3 +1,5 @@
+> ⚠️ This repository was migrated to [Codeberg](https://codeberg.org/din14970/elabftwqrprint)
+
 # Elabftwqrprint
 
 ## Description
